@@ -1,5 +1,5 @@
 import streamlit as st
-import ollama
+import requests
 
 # Set up the page
 st.set_page_config(page_title="LLM Chat App", initial_sidebar_state="expanded")
@@ -46,8 +46,9 @@ if user_prompt:
 
     # Generate response from LLM
     with st.spinner('Generating response...'):
-        response = ollama.chat(model=model, messages=[{"role": "user", "content": full_prompt}])
-        response_content = response['message']['content']
+        ollama_url = "http://host.docker.internal:11434/api/v1/chat"  # Update this URL to match your Ollama setup
+        response = requests.post(ollama_url, json={"model": model, "messages": [{"role": "user", "content": full_prompt}]})
+        response_content = response.json()['message']['content']
 
     # Display response in chat message widget
     with st.chat_message("assistant"):
